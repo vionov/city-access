@@ -4,22 +4,24 @@ const iconv = require('iconv-lite');
 
 const { addFileToDb, calculateDays, convertToCsvFormat } = require('./lib');
 
-const filesInDir = fs.readdirSync('data', { withFileTypes: '*.txt'});
-const db = addAllFilestoDb();
+processFiles();
 
-let resultsObj = {};
-resultsObj = calculateDays(db);
+function processFiles() {
+    const filesList = fs.readdirSync('./../data', { withFileTypes: '*.txt'});
+    const db = addAllFilestoDb(filesList);
+    const resultsObj = calculateDays(db);
 
-let csvData = convertToCsvFormat(resultsObj);
-// console.log(csvData);
+    const csvData = convertToCsvFormat(resultsObj);
 
-fs.writeFileSync('result.csv', csvData.join('\n'));
+    fs.writeFileSync('result.csv', csvData.join('\n'));
+}
 
-function addAllFilestoDb() {
+function addAllFilestoDb(filesList) {
     const db = {};
 
-    for(let i=0; i<filesInDir.length; i++) {
-        const rowsArr = readFileToArray(path.resolve('data', filesInDir[i].name));
+    for(let i=0; i<filesList.length; i++) {
+        const filePath = path.resolve('./../data', filesList[i].name);
+        const rowsArr = readFileToArray(filePath);
         addFileToDb(db, rowsArr);
     }
     return db;
