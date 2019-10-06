@@ -9,7 +9,7 @@ const { addFileToDb, calculateDays, convertToCsvFormat } = require('./lib');
 const port = process.env.PORT || 3000;
 
 const app = express();
-app.use(express.static('ui'));
+app.use(express.static(path.resolve(__dirname,'ui')));
 
 cleanDirs();
 prepareDirs();
@@ -107,7 +107,7 @@ function processFiles(filesList) {
     const resultsObj = calculateDays(db);
     const csvData = convertToCsvFormat(resultsObj);
     const resultFileName = `output/result_${Date.now()}.csv`;
-    const resultFilePath = path.resolve(resultFileName);
+    const resultFilePath = path.resolve(__dirname, resultFileName);
     fs.writeFileSync(resultFilePath, csvData.join('\n'));
 
     deleteFiles(filesList);

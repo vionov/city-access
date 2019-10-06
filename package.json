@@ -2,9 +2,9 @@
   "name": "city-access",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/app.js",
     "test": "jest"
   },
   "author": "",
@@ -17,5 +17,8 @@
   },
   "devDependencies": {
     "jest": "^24.9.0"
+  },
+  "engines": {
+    "node": "10.x"
   }
 }
