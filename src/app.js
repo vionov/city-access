@@ -12,6 +12,7 @@ const app = express();
 app.use(express.static('ui'));
 
 cleanDirs();
+prepareDirs();
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -52,15 +53,40 @@ app.listen(port, () =>
     console.log(`http://localhost:${port}`)
 );
 
+function prepareDirs() {
+    fs.access('input', fs.constants.F_OK, (err) => {
+        if (err) {
+            fs.mkdir('input', err => {
+                if (err) throw err;
+            });
+        }
+    });
+    fs.access('output', fs.constants.F_OK, (err) => {
+        if (err) {
+            fs.mkdir('output', err => {
+                if (err) throw err;
+            });
+        }
+    });
+}
+
 function cleanDirs() {
     const inputPath = path.resolve('input');
     const outputPath = path.resolve('output');
 
-    fs.readdir(inputPath, (err, files) => {
-        deleteFiles(files.map(file => path.resolve('input', file)));
+    fs.access('input', fs.constants.F_OK, (err) => {
+        if (!err) {
+            fs.readdir(inputPath, (err, files) => {
+                deleteFiles(files.map(file => path.resolve('input', file)));
+            });
+        }
     });
-    fs.readdir(outputPath, (err, files) => {
-        deleteFiles(files.map(file => path.resolve('output', file)));
+    fs.access('input', fs.constants.F_OK, (err) => {
+        if (!err) {
+            fs.readdir(outputPath, (err, files) => {
+                deleteFiles(files.map(file => path.resolve('output', file)));
+            });
+        }
     });
 }
 
