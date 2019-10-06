@@ -71,20 +71,20 @@ function prepareDirs() {
 }
 
 function cleanDirs() {
-    const inputPath = path.resolve('input');
-    const outputPath = path.resolve('output');
+    const inputPath = path.resolve(__dirname, 'input');
+    const outputPath = path.resolve(__dirname, 'output');
 
-    fs.access('input', fs.constants.F_OK, (err) => {
+    fs.access(inputPath, fs.constants.F_OK, (err) => {
         if (!err) {
             fs.readdir(inputPath, (err, files) => {
-                deleteFiles(files.map(file => path.resolve('input', file)));
+                deleteFiles(files.map(file => path.resolve(__dirname, 'input', file)));
             });
         }
     });
-    fs.access('input', fs.constants.F_OK, (err) => {
+    fs.access(inputPath, fs.constants.F_OK, (err) => {
         if (!err) {
             fs.readdir(outputPath, (err, files) => {
-                deleteFiles(files.map(file => path.resolve('output', file)));
+                deleteFiles(files.map(file => path.resolve(__dirname, 'output', file)));
             });
         }
     });
@@ -131,8 +131,8 @@ function addAllFilestoDb(filesList) {
 
 function readFileToArray(file) {
     console.log(file);
-    console.log(content);
     const content = fs.readFileSync(file);
+    console.log(content);
     const contentUtf = iconv.encode(iconv.decode(content, 'win1251'), 'utf8').toString();
     const arr = contentUtf.split('\n');
     return arr;
