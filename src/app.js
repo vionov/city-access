@@ -27,11 +27,19 @@ const upload = multer({ storage: storage });
 
 app.post('/', upload.array('logs'), (req, res, next) => {
     const filesList = Array.from(req.files).map(file => file.destination + file.filename);
-    const resultFilePath = processFiles(filesList);
 
-    res.send({
-        url: resultFilePath
+    const inputPath = path.resolve(__dirname, 'input');
+    fs.readdir(inputPath, (err, files) => {
+        res.send({
+            files
+        });
     });
+    
+    // const resultFilePath = processFiles(filesList);
+
+    // res.send({
+    //     url: resultFilePath
+    // });
 });
 
 app.get('/', (req, res) => {
