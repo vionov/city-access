@@ -130,6 +130,8 @@ function addAllFilestoDb(filesList) {
 }
 
 function readFileToArray(file) {
+    console.log(file);
+    console.log(content);
     const content = fs.readFileSync(file);
     const contentUtf = iconv.encode(iconv.decode(content, 'win1251'), 'utf8').toString();
     const arr = contentUtf.split('\n');
