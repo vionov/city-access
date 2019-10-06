@@ -1,0 +1,15 @@
+.row {
+    padding-top: 5px;
+}
+
+.container {
+    padding-top: 30px;
+}
+
+.hidden {
+    display: none;
+}
+
+.alert {
+    margin-top: 10px;
+}

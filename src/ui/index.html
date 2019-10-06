@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="style.css">
+        <title>City access control</title>
+    </head>
+    <body>
+        <div class="container" id="app">
+            <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-6">
+                    <form method="post" action="/" enctype="multipart/form-data">
+                        <div class="input-group mb-3">
+                            <div class="custom-file">
+                                <input type="file" multiple class="custom-file-input" name="logs" id="file">
+                                <label class="custom-file-label" for="file" id="label">Выбрать файлы</label>
+                            </div>
+                        </div>
+                    </form>                        
+                </div>
+                <div class="col-sm-3">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-6">
+                    <ul class="list-group hidden" id="list">
+                    </ul>
+                </div>
+                <div class="col-sm-3"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-6">
+                    <div class="text-center hidden" id="spinner">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Обработка...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3"></div>
+                <div class="col-sm-6">
+                    <button type="submit" class="btn btn-primary hidden" id="submit">Обработать</button>
+                    <a href="#" class="btn btn-secondary hidden" role="button" id="download">Скачать результат</a>
+                    <div class="alert alert-primary hidden" id="alert" role="alert">
+                        Файл будет удален через 10 минут, скачайте его сейчас!
+                    </div>
+                </div>
+                <div class="col-sm-3"></div>
+            </div>
+        </div>
+
+        <script src="index.js"></script>
+    </body>
+</html>
