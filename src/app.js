@@ -7,6 +7,8 @@ const multer  = require('multer');
 const { addFileToDb, calculateDays, convertToCsvFormat } = require('./lib');
 
 const port = process.env.PORT || 3000;
+const inputPath = path.resolve(__dirname, 'input');
+const outputPath = path.resolve(__dirname, 'output');
 
 const app = express();
 app.use(express.static(path.resolve(__dirname,'ui')));
@@ -16,7 +18,7 @@ prepareDirs();
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, __dirname + '/input/');
+        cb(null, inputPath);
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname.slice(0, file.originalname.indexOf('.')) + '_' + Date.now() + '.txt' );
@@ -26,20 +28,19 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.post('/', upload.array('logs'), (req, res, next) => {
-    const filesList = Array.from(req.files).map(file => file.destination + file.filename);
+    const filesList = Array.from(req.files).map(file => path.resolve(file.destination, file.filename));
 
-    const inputPath = path.resolve(__dirname, 'input');
-    fs.readdir(inputPath, (err, files) => {
-        res.send({
-            files
-        });
-    });
-    
-    // const resultFilePath = processFiles(filesList);
-
-    // res.send({
-    //     url: resultFilePath
+    // fs.readdir(inputPath, (err, files) => {
+    //     res.send({
+    //         files
+    //     });
     // });
+    
+    const resultFilePath = processFiles(filesList);
+
+    res.send({
+        url: resultFilePath
+    });
 });
 
 app.get('/', (req, res) => {
@@ -62,16 +63,16 @@ app.listen(port, () =>
 );
 
 function prepareDirs() {
-    fs.access('input', fs.constants.F_OK, (err) => {
+    fs.access(inputPath, fs.constants.F_OK, (err) => {
         if (err) {
-            fs.mkdir('input', err => {
+            fs.mkdir(inputPath, err => {
                 if (err) throw err;
             });
         }
     });
-    fs.access('output', fs.constants.F_OK, (err) => {
+    fs.access(outputPath, fs.constants.F_OK, (err) => {
         if (err) {
-            fs.mkdir('output', err => {
+            fs.mkdir(outputPath, err => {
                 if (err) throw err;
             });
         }
@@ -79,20 +80,17 @@ function prepareDirs() {
 }
 
 function cleanDirs() {
-    const inputPath = path.resolve(__dirname, 'input');
-    const outputPath = path.resolve(__dirname, 'output');
-
     fs.access(inputPath, fs.constants.F_OK, (err) => {
         if (!err) {
             fs.readdir(inputPath, (err, files) => {
-                deleteFiles(files.map(file => path.resolve(__dirname, 'input', file)));
+                deleteFiles(files.map(file => path.resolve(inputPath, file)));
             });
         }
     });
     fs.access(inputPath, fs.constants.F_OK, (err) => {
         if (!err) {
             fs.readdir(outputPath, (err, files) => {
-                deleteFiles(files.map(file => path.resolve(__dirname, 'output', file)));
+                deleteFiles(files.map(file => path.resolve(outputPath, file)));
             });
         }
     });
