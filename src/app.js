@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const iconv = require('iconv-lite');
 const express = require('express');
-const multer  = require('multer');
+const multer = require('multer');
 
 const { addFileToDb, calculateDays, convertToCsvFormat } = require('./lib');
 
@@ -11,7 +11,7 @@ const inputPath = path.resolve(__dirname, 'input');
 const outputPath = path.resolve(__dirname, 'output');
 
 const app = express();
-app.use(express.static(path.resolve(__dirname,'ui')));
+app.use(express.static(path.resolve(__dirname, 'ui')));
 
 cleanDirs();
 prepareDirs();
@@ -21,21 +21,22 @@ const storage = multer.diskStorage({
         cb(null, inputPath);
     },
     filename: (req, file, cb) => {
-        cb(null, file.originalname.slice(0, file.originalname.indexOf('.')) + '_' + Date.now() + '.txt' );
+        cb(
+            null,
+            file.originalname.slice(0, file.originalname.indexOf('.')) +
+                '_' +
+                Date.now() +
+                '.txt'
+        );
     }
 });
-  
+
 const upload = multer({ storage: storage });
 
 app.post('/', upload.array('logs'), (req, res, next) => {
-    const filesList = Array.from(req.files).map(file => path.resolve(file.destination, file.filename));
-
-    // fs.readdir(inputPath, (err, files) => {
-    //     res.send({
-    //         files
-    //     });
-    // });
-    
+    const filesList = Array.from(req.files).map(file =>
+        path.resolve(file.destination, file.filename)
+    );
     const resultFilePath = processFiles(filesList);
 
     res.send({
@@ -58,19 +59,17 @@ app.get('/output/:name', (req, res) => {
     }
 });
 
-app.listen(port, () => 
-    console.log(`http://localhost:${port}`)
-);
+app.listen(port, () => console.log(`http://localhost:${port}`));
 
 function prepareDirs() {
-    fs.access(inputPath, fs.constants.F_OK, (err) => {
+    fs.access(inputPath, fs.constants.F_OK, err => {
         if (err) {
             fs.mkdir(inputPath, err => {
                 if (err) throw err;
             });
         }
     });
-    fs.access(outputPath, fs.constants.F_OK, (err) => {
+    fs.access(outputPath, fs.constants.F_OK, err => {
         if (err) {
             fs.mkdir(outputPath, err => {
                 if (err) throw err;
@@ -80,14 +79,14 @@ function prepareDirs() {
 }
 
 function cleanDirs() {
-    fs.access(inputPath, fs.constants.F_OK, (err) => {
+    fs.access(inputPath, fs.constants.F_OK, err => {
         if (!err) {
             fs.readdir(inputPath, (err, files) => {
                 deleteFiles(files.map(file => path.resolve(inputPath, file)));
             });
         }
     });
-    fs.access(inputPath, fs.constants.F_OK, (err) => {
+    fs.access(inputPath, fs.constants.F_OK, err => {
         if (!err) {
             fs.readdir(outputPath, (err, files) => {
                 deleteFiles(files.map(file => path.resolve(outputPath, file)));
@@ -121,14 +120,14 @@ function processFiles(filesList) {
     setTimeout(() => {
         deleteFiles([resultFilePath]);
     }, 10 * 60 * 1000);
-    
+
     return resultFileName;
 }
 
 function addAllFilestoDb(filesList) {
     const db = {};
 
-    for(let i=0; i<filesList.length; i++) {
+    for (let i = 0; i < filesList.length; i++) {
         const rowsArr = readFileToArray(filesList[i]);
         addFileToDb(db, rowsArr);
     }
@@ -136,10 +135,10 @@ function addAllFilestoDb(filesList) {
 }
 
 function readFileToArray(file) {
-    console.log(file);
     const content = fs.readFileSync(file);
-    console.log(content);
-    const contentUtf = iconv.encode(iconv.decode(content, 'win1251'), 'utf8').toString();
+    const contentUtf = iconv
+        .encode(iconv.decode(content, 'win1251'), 'utf8')
+        .toString();
     const arr = contentUtf.split('\n');
     return arr;
 }
