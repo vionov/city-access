@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var input = document.querySelector('#file');
     var submit = document.querySelector('#submit');
     var label = document.querySelector('#label');
@@ -7,11 +7,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var downloadBtn = document.querySelector('#download');
     var alertNode = document.querySelector('#alert');
 
-    input.addEventListener('change', function (event) {
+    input.addEventListener('change', function() {
         var filesSelected = input.files;
         if (filesSelected.length) {
             var fileNames = Array.from(filesSelected).map(item => item.name);
-            var liNodes = fileNames.map(item => `<li class="list-group-item">${item}</li>`).join('');
+            var liNodes = fileNames
+                .map(item => `<li class="list-group-item">${item}</li>`)
+                .join('');
             label.textContent = 'Файлы выбраны ↓';
             list.innerHTML = liNodes;
             list.classList.remove('hidden');
@@ -21,16 +23,18 @@ document.addEventListener('DOMContentLoaded', function () {
             downloadBtn.href = '';
         }
     });
-    
-    submit.addEventListener('click', function (event) {
+
+    submit.addEventListener('click', function(event) {
         event.preventDefault();
         spinner.classList.remove('hidden');
+        submit.disabled = true;
         var filesSelected = input.files;
-        
+
         sendData('/', filesSelected, function(response) {
             spinner.classList.add('hidden');
             list.innerHTML = '';
             submit.classList.add('hidden');
+            submit.disabled = false;
             downloadBtn.href = response.url;
             downloadBtn.classList.remove('hidden');
             alertNode.classList.remove('hidden');
@@ -45,15 +49,16 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function sendData(url, files, callback) {
-    var formData  = new FormData();
-  
+    var formData = new FormData();
+
     Array.from(files).forEach(file => {
         formData.append('logs', file);
     });
-  
+
     fetch(url, {
-      method: 'POST',
-      body: formData
-    }).then(response => response.json())
-    .then(callback);
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(callback);
 }
